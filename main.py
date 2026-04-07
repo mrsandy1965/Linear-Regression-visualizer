@@ -13,6 +13,7 @@ st.title("📈 Linear Regression Interactive Visualizer")
 st.sidebar.header("⚙️ Controls")
 
 noise = st.sidebar.slider("Noise Level", 0.0, 5.0, 1.0)
+num_points = st.sidebar.slider("Data Points", 10, 300, 50, 10)
 m = st.sidebar.slider("Slope (m)", -5.0, 5.0, 0.0)
 b = st.sidebar.slider("Intercept (b)", -10.0, 10.0, 0.0)
 
@@ -26,8 +27,8 @@ run_gd = st.sidebar.checkbox("Run Gradient Descent")
 # Data Generation
 # ---------------------------
 np.random.seed(42)
-X = np.linspace(0, 10, 50)
-y = 2 * X + 3 + np.random.randn(50) * noise
+X = np.linspace(0, 10, num_points)
+y = 2 * X + 3 + np.random.randn(num_points) * noise
 
 if add_outliers:
     X = np.append(X, [2, 8])
@@ -54,7 +55,7 @@ with tab1:
     st.subheader("📊 Data & Line Fit")
     st.info("👉 Adjust slope and intercept to see how the line fits the data.")
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(8, 4))
     ax.scatter(X, y, label="Data")
     ax.plot(X, y_pred, color="red", label="Model")
     ax.legend()
@@ -70,7 +71,7 @@ with tab2:
     st.write(f"### MSE: {mse:.4f}")
     st.info("👉 Vertical lines show errors (residuals). Larger lines = larger error.")
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(8, 4))
     ax.scatter(X, y)
     ax.plot(X, y_pred, color="red")
 
@@ -104,7 +105,12 @@ with tab3:
         colorscale='Viridis'
     ))
 
-    fig.update_layout(title="Loss Contour", xaxis_title="Slope (m)", yaxis_title="Intercept (b)")
+    fig.update_layout(
+        title="Loss Contour",
+        xaxis_title="Slope (m)",
+        yaxis_title="Intercept (b)",
+        height=380,
+    )
     st.plotly_chart(fig)
 
 # ---------------------------
@@ -150,7 +156,7 @@ with tab4:
             line=dict(color='red')
         ))
 
-        fig.update_layout(title="Gradient Descent Path")
+        fig.update_layout(title="Gradient Descent Path", height=380)
         st.plotly_chart(fig)
     else:
         st.warning("Enable 'Run Gradient Descent' from sidebar")
@@ -183,7 +189,7 @@ with tab5:
     lr_good = run_lr(0.01)
     lr_large = run_lr(0.1)
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(8, 4))
     ax.plot(lr_small, label="Small LR (Slow)")
     ax.plot(lr_good, label="Optimal LR")
     ax.plot(lr_large, label="Large LR (Unstable)")
